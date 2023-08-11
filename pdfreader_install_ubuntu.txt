@@ -1,0 +1,63 @@
+attempting to 'pip install pdfreader' on ubuntu 
+
+and get this error:
+
+Collecting pdfreader
+  Downloading pdfreader-0.1.12.tar.gz (2.9 MB)
+     |████████████████████████████████| 2.9 MB 1.0 MB/s
+Collecting bitarray>=1.1.0
+  Downloading bitarray-2.8.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (285 kB)
+     |████████████████████████████████| 285 kB 19.3 MB/s
+Collecting pillow>=7.1.0
+  Downloading Pillow-10.0.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)
+     |████████████████████████████████| 3.3 MB 23.4 MB/s
+Collecting pycryptodome>=3.9.9
+  Downloading pycryptodome-3.18.0-cp35-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+     |████████████████████████████████| 2.1 MB 15.4 MB/s
+Collecting python-dateutil>=2.8.1
+  Downloading python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
+     |████████████████████████████████| 247 kB 15.5 MB/s
+Collecting six>=1.5
+  Downloading six-1.16.0-py2.py3-none-any.whl (11 kB)
+Building wheels for collected packages: pdfreader
+  Building wheel for pdfreader (setup.py) ... error
+  ERROR: Command errored out with exit status 1:
+   command: /home/walter/poppdf-env/bin/python3 -u -c 'import sys, setuptools, tokenize; sys.argv[0] = '"'"'/tmp/pip-install-nv8nfg7r/pdfreader/setup.py'"'"'; __file__='"'"'/tmp/pip-install-nv8nfg7r/pdfreader/setup.py'"'"';f=getattr(tokenize, '"'"'open'"'"', open)(__file__);code=f.read().replace('"'"'\r\n'"'"', '"'"'\n'"'"');f.close();exec(compile(code, __file__, '"'"'exec'"'"'))' bdist_wheel -d /tmp/pip-wheel-bb7a6o20
+       cwd: /tmp/pip-install-nv8nfg7r/pdfreader/
+  Complete output (6 lines):
+  usage: setup.py [global_opts] cmd1 [cmd1_opts] [cmd2 [cmd2_opts] ...]
+     or: setup.py --help [cmd1 cmd2 ...]
+     or: setup.py --help-commands
+     or: setup.py cmd --help
+
+  error: invalid command 'bdist_wheel'
+  ----------------------------------------
+  ERROR: Failed building wheel for pdfreader
+  Running setup.py clean for pdfreader
+Failed to build pdfreader
+Installing collected packages: bitarray, pillow, pycryptodome, six, python-dateutil, pdfreader
+    Running setup.py install for pdfreader ... done
+Successfully installed bitarray-2.8.1 pdfreader-0.1.12 pillow-10.0.0 pycryptodome-3.18.0 python-dateutil-2.8.2 six-1.16.0
+ChatGPT
+The error you're encountering is not directly related to the installation of the pdfreader package. The error message you're seeing is because the package's setup.py script is attempting to use the command bdist_wheel, which is not recognized as a valid command.
+
+This is likely because the bdist_wheel command is provided by the wheel package, which is used to create Python wheel packages. It seems that the wheel package might be missing or not properly installed in your environment.
+
+To resolve this issue, you can follow these steps:
+
+Install the wheel Package:
+Open a terminal and run the following command to install the wheel package using pip:
+
+bash
+Copy code
+pip install wheel
+This will install the wheel package, which provides the bdist_wheel command used during the installation process.
+
+Retry the Installation:
+After installing the wheel package, try installing the pdfreader package again using pip. Make sure you are within your virtual environment (if you're using one):
+
+bash
+Copy code
+source /path/to/your/virtualenv/bin/activate  # Activate your virtual environment
+pip install pdfreader
+This should resolve the issue, and the installation of the pdfreader package should proceed without errors. If you continue to experience issues or encounter different errors, please provide additional details, and I'll be happy to assist you further.
