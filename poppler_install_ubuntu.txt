@@ -1,0 +1,126 @@
+Attempting to 'pip install python-poppler' on ubuntu linux
+
+and get this error:
+
+ERROR: Command errored out with exit status 1:
+     command: /home/walter/poppdf-env/bin/python3 /tmp/tmpuu_ltypw prepare_metadata_for_build_wheel /tmp/tmplgq6b8_3
+         cwd: /tmp/pip-install-bqvrvj3b/python-poppler
+    Complete output (20 lines):
+    + meson setup /tmp/pip-install-bqvrvj3b/python-poppler /tmp/pip-install-bqvrvj3b/python-poppler/.mesonpy-lttxi3io/build -Dbuildtype=release -Db_ndebug=if-release -Db_vscrt=md --native-file=/tmp/pip-install-bqvrvj3b/python-poppler/.mesonpy-lttxi3io/build/meson-python-native-file.ini
+    The Meson build system
+    Version: 1.2.1
+    Source dir: /tmp/pip-install-bqvrvj3b/python-poppler
+    Build dir: /tmp/pip-install-bqvrvj3b/python-poppler/.mesonpy-lttxi3io/build
+    Build type: native build
+    Project name: python-poppler
+    Project version: 0.4.1
+
+    ../../meson.build:1:0: ERROR: Unknown compiler(s): [['c++'], ['g++'], ['clang++'], ['nvc++'], ['pgc++'], ['icpc'], ['icpx']]
+    The following exception(s) were encountered:
+    Running `c++ --version` gave "[Errno 2] No such file or directory: 'c++'"
+    Running `g++ --version` gave "[Errno 2] No such file or directory: 'g++'"
+    Running `clang++ --version` gave "[Errno 2] No such file or directory: 'clang++'"
+    Running `nvc++ --version` gave "[Errno 2] No such file or directory: 'nvc++'"
+    Running `pgc++ --version` gave "[Errno 2] No such file or directory: 'pgc++'"
+    Running `icpc --version` gave "[Errno 2] No such file or directory: 'icpc'"
+    Running `icpx --version` gave "[Errno 2] No such file or directory: 'icpx'"
+
+    A full log can be found at /tmp/pip-install-bqvrvj3b/python-poppler/.mesonpy-lttxi3io/build/meson-logs/meson-log.txt
+    ----------------------------------------
+ERROR: Command errored out with exit status 1: /home/walter/poppdf-env/bin/python3 /tmp/tmpuu_ltypw prepare_metadata_for_build_wheel /tmp/tmplgq6b8_3 Check the logs for full command output.
+ChatGPT
+The error message you've encountered indicates that the compilation of the python-poppler package is failing because the required C++ compiler is not found. The package needs to be compiled as part of the installation process, and it seems that the necessary C++ compiler is not installed on your system.
+
+To resolve this issue, you need to make sure you have a C++ compiler installed and configured on your Ubuntu Linux system. Here's how you can do that:
+
+Install C++ Compiler:
+Open a terminal and run the following command to install the GNU C++ compiler (g++):
+
+bash
+Copy code
+sudo apt-get update
+sudo apt-get install g++
+This will install the GNU Compiler Collection, which includes the C++ compiler.
+
+Retry the Installation:
+Once you've installed the C++ compiler, try installing the python-poppler package again using pip. Make sure you are within your virtual environment (if you're using one):
+
+bash
+Copy code
+source /path/to/your/virtualenv/bin/activate  # Activate your virtual environment
+pip install python-poppler
+If you continue to encounter issues, there might be additional dependencies or configuration requirements for the python-poppler package. You could also consider checking the package's official documentation or the GitHub repository for any installation troubleshooting steps.
+
+If you're still facing problems, please provide any additional error messages or information, and I'll do my best to assist you further.
+
+
+
+
+User
+OK I install g++ and then re-ran: 'pip install python-poppler'
+
+but got this error:
+
+Collecting python-poppler
+  Using cached python_poppler-0.4.1.tar.gz (138 kB)
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Installing backend dependencies ... done
+    Preparing wheel metadata ... error
+    ERROR: Command errored out with exit status 1:
+     command: /home/walter/poppdf-env/bin/python3 /tmp/tmpl1pyqqcs prepare_metadata_for_build_wheel /tmp/tmpsg4bwssm
+         cwd: /tmp/pip-install-c8waxjkv/python-poppler
+    Complete output (27 lines):
+    + meson setup /tmp/pip-install-c8waxjkv/python-poppler /tmp/pip-install-c8waxjkv/python-poppler/.mesonpy-9dh176ae/build -Dbuildtype=release -Db_ndebug=if-release -Db_vscrt=md --native-file=/tmp/pip-install-c8waxjkv/python-poppler/.mesonpy-9dh176ae/build/meson-python-native-file.ini
+    The Meson build system
+    Version: 1.2.1
+    Source dir: /tmp/pip-install-c8waxjkv/python-poppler
+    Build dir: /tmp/pip-install-c8waxjkv/python-poppler/.mesonpy-9dh176ae/build
+    Build type: native build
+    Project name: python-poppler
+    Project version: 0.4.1
+    C++ compiler for the host machine: c++ (gcc 9.4.0 "c++ (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0")
+    C++ linker for the host machine: c++ ld.bfd 2.34
+    Host machine cpu family: x86_64
+    Host machine cpu: x86_64
+    Found pkg-config: /usr/bin/pkg-config (0.29.1)
+    Found CMake: /usr/bin/cmake (3.16.3)
+    DEPRECATION: CMake support for versions <3.17 is deprecated since Meson 0.62.0.
+    |
+    |   However, Meson was only able to find CMake 3.16.3.
+    |
+    |   Support for all CMake versions below 3.17.0 will be removed once
+    |   newer CMake versions are more widely adopted. If you encounter
+    |   any errors please try upgrading CMake to a newer version first.
+
+    Run-time dependency poppler-cpp found: NO (tried pkgconfig and cmake)
+
+    ../../meson.build:11:14: ERROR: Dependency "poppler-cpp" not found, tried pkgconfig and cmake
+
+    A full log can be found at /tmp/pip-install-c8waxjkv/python-poppler/.mesonpy-9dh176ae/build/meson-logs/meson-log.txt
+    ----------------------------------------
+ERROR: Command errored out with exit status 1: /home/walter/poppdf-env/bin/python3 /tmp/tmpl1pyqqcs prepare_metadata_for_build_wheel /tmp/tmpsg4bwssm Check the logs for full command output.
+ChatGPT
+The error message indicates that the build process for the python-poppler package is failing due to a missing dependency called poppler-cpp. This is a C++ library that the package requires in order to compile and function properly.
+
+To resolve this issue, you need to install the poppler-cpp library on your system before attempting to install the python-poppler package again. Here's how you can do it:
+
+Install poppler-cpp:
+Open a terminal and run the following command to install the poppler-cpp package:
+
+bash
+Copy code
+sudo apt-get update
+sudo apt-get install libpoppler-cpp-dev
+This command will install the poppler-cpp development files, which include the necessary headers and libraries for building packages that depend on poppler-cpp.
+
+Retry the Installation:
+After installing the poppler-cpp library, try installing the python-poppler package again using pip. Make sure you are within your virtual environment (if you're using one):
+
+bash
+Copy code
+source /path/to/your/virtualenv/bin/activate  # Activate your virtual environment
+pip install python-poppler
+This should resolve the missing dependency issue, and the installation process for the python-poppler package should now proceed without errors.
+
+If you encounter any further issues or errors, please provide the additional information, and I'll be glad to assist you further.
