@@ -122,3 +122,95 @@ This script will scan the specified input directory and its subdirectories for P
 Make sure to replace "/mnt/k/Skull_Digger" with the correct path to your input directory, and adjust the output_file path as needed.
 
 After modifying the script, save it to a file (e.g., validate_pdfs_and_save.sh), make it executable with chmod +x validate_pdfs_and_save.sh, and then you can run it with ./validate_pdfs_and_save.sh. The script will create the output text file with the paths of corrupted or invalid PDFs.
+
+Let's refactor that bash script so that we save the output of the validation scan at set intervals (say every 1000 files) as the scan has an issue with hanging sometimes. Also if we could add some more debugging features that might help as well. Finally please suggest a file name for the refactored bash script.
+ChatGPT
+Certainly, let's refactor the script to save the output at set intervals and add more debugging features. Here's the updated script:
+
+bash
+Copy code
+#!/bin/bash
+
+input_directory="/mnt/k/Skull_Digger"  # Replace with the path to your input directory
+interval=1000  # Save output every 1000 files
+timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
+output_dir="/mnt/k/PDF_Validation_Output_${timestamp}"
+output_file="Invalid_PDFs_${timestamp}.txt"
+log_file="Validation_Log_${timestamp}.txt"
+
+mkdir -p "$output_dir"  # Create the output directory
+
+echo "Scanning directory: $input_directory"
+echo "Writing invalid PDFs to: $output_dir/$output_file"
+echo "Logging details to: $output_dir/$log_file"
+echo
+
+count=0
+total_invalid=0
+
+for pdf_file in "$input_directory"/**/*.pdf; do
+    if [ $((count % interval)) -eq 0 ]; then
+        echo "Processed: $count files"
+        echo "Invalid PDFs so far: $total_invalid"
+        echo "Last processed file: $pdf_file"
+        echo
+        echo "Processed: $count files" >> "$output_dir/$log_file"
+        echo "Invalid PDFs so far: $total_invalid" >> "$output_dir/$log_file"
+        echo "Last processed file: $pdf_file" >> "$output_dir/$log_file"
+    fi
+
+    pdfinfo "$pdf_file" &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo "$pdf_file" >> "$output_dir/$output_file"
+        echo "Corrupted or invalid PDF: $pdf_file"
+        echo "$pdf_file" >> "$output_dir/$log_file"
+        total_invalid=$((total_invalid + 1))
+    fi
+
+    count=$((count + 1))
+done
+
+echo
+echo "Scan complete."
+echo "Processed: $count files"
+echo "Invalid PDFs found: $total_invalid"
+echo "Output saved to: $output_dir"
+This script creates an output directory with a timestamp in its name and saves the invalid PDF paths at set intervals while also logging details about the process. Additionally, it prints progress information and final statistics.
+
+You can save this script as validate_pdfs_and_save.sh. After saving, make it executable with chmod +x validate_pdfs_and_save.sh, and then run it with ./validate_pdfs_and_save.sh.
+
+Remember to adjust input_directory if needed, and you can fine-tune the interval value to control how often the output is saved and progress is displayed.
+
+
+
+
+User
+Where does 'validate_pdfs_and_save.sh' save those text files?
+ChatGPT
+In the refactored script provided earlier, the output text files are saved in a directory named based on the current timestamp. Here's how the output files are organized:
+
+The script creates an output directory using the following line:
+
+bash
+Copy code
+output_dir="/mnt/k/PDF_Validation_Output_${timestamp}"
+The variable timestamp contains the current date and time in the format "YYYY-MM-DD_HH-MM-SS". The output directory's name includes this timestamp.
+
+The script then uses this output directory to save the output text files. For example, the invalid PDFs' paths are saved in a text file named Invalid_PDFs_${timestamp}.txt within the output directory:
+
+bash
+Copy code
+output_file="Invalid_PDFs_${timestamp}.txt"
+The log file, which contains debugging information, is saved as Validation_Log_${timestamp}.txt within the same output directory:
+
+bash
+Copy code
+log_file="Validation_Log_${timestamp}.txt"
+The script displays the path to the output directory at the end of the process:
+
+bash
+Copy code
+echo "Output saved to: $output_dir"
+This means that the output directory containing the text files will be created in the same location where the script is run from. In this case, it should be where the validate_pdfs_and_save.sh script itself is located.
+
+So, for example, if you run the script from your home directory (/mnt/k/), the output files will be saved in a subdirectory named something like PDF_Validation_Output_YYYY-MM-DD_HH-MM-SS.
