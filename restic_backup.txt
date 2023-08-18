@@ -1,0 +1,47 @@
+Restic is a backup program that can create and manage backups from the command line. To create an archive of directories in 15 GB increments using Restic on Windows PowerShell, you'll need to follow these steps:
+
+1. **Install Restic**: If you haven't already, you'll need to install Restic on your Windows machine. You can download the Windows executable from the Restic website: https://restic.net/#downloads
+
+2. **Set Up Restic Repository**: Create a repository where the backups will be stored. This can be a local folder, a network drive, or a cloud storage service. For example, let's assume you're using a local folder `D:\ResticBackup`.
+
+3. **Create a PowerShell Script**: Open Windows PowerShell and create a script to run Restic commands for your backup needs. You can create a `.ps1` script file using a text editor of your choice. Here's an example script that backs up the `K:\` directory in 15 GB increments:
+
+```powershell
+# Set your repository location
+$repository = "D:\ResticBackup"
+
+# Set the path of the directory you want to backup
+$sourceDir = "K:\"
+
+# Loop to create backups in 15 GB increments
+$incrementSize = 15 * 1024 * 1024 * 1024  # 15 GB in bytes
+$backupIndex = 1
+
+while ($true) {
+    $backupDir = Join-Path $repository ("backup" + $backupIndex.ToString("000"))
+    $cmd = "restic.exe backup $sourceDir --repo=$backupDir"
+
+    # Run the backup command
+    Invoke-Expression $cmd
+
+    # Check the size of the backup
+    $backupSize = (Get-ChildItem $backupDir -Recurse | Measure-Object -Property Length -Sum).Sum
+
+    # Check if backup size exceeds 15 GB
+    if ($backupSize -ge $incrementSize) {
+        $backupIndex++
+    } else {
+        break
+    }
+}
+```
+
+4. **Run the Script**: Save the PowerShell script you created and run it in PowerShell by navigating to the directory containing the script and using the following command:
+
+```powershell
+.\your-script-name.ps1
+```
+
+Replace `your-script-name.ps1` with the actual name of your script file.
+
+Please note that Restic is a powerful tool, and this example script might need adjustments based on your specific requirements and setup. Make sure to test the script in a controlled environment before using it for actual backups to ensure that it meets your needs and works correctly.
