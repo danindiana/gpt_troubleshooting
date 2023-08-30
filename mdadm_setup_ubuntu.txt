@@ -230,3 +230,153 @@ bash
 Copy code
 sudo mount -a
 This will also happen automatically upon boot. If any issues arise, you'll be alerted during this command or at boot time.
+
+What CLI tools could I use to test the IO and other metrics of the RAID 0 array? Please suggests some tests w/ syntax for said tools. 
+ChatGPT
+Testing the performance of a RAID array is a good idea to ensure that it meets your expectations. Below are some command-line tools you can use to measure various metrics including I/O performance, latency, etc.
+
+1. dd (Data Duplicator)
+The dd command can be used for simple read and write speed tests. This will write a 1GB file to your RAID array, which you should remove afterwards:
+
+Write Test:
+
+bash
+Copy code
+dd if=/dev/zero of=/mnt/raid0/testfile bs=1M count=1024 conv=fdatasync
+Read Test (clear cache before running):
+
+bash
+Copy code
+sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+dd if=/mnt/raid0/testfile of=/dev/null bs=1M count=1024
+After running each test, dd will display the speed at which data was read or written.
+
+2. hdparm
+The hdparm tool can be used for simple disk operations like reading directly from the disk bypassing all caching layers:
+
+bash
+Copy code
+sudo hdparm -Tt /dev/md0
+3. iotop
+The iotop command is similar to top, but for I/O. This tool will allow you to monitor I/O usage in real-time:
+
+bash
+Copy code
+sudo iotop
+4. iostat
+The iostat command provides more detailed I/O statistics, and can be run as a continuous report:
+
+bash
+Copy code
+iostat -m 5
+This will show a report every 5 seconds, displaying metrics in megabytes.
+
+5. fio (Flexible IO Tester)
+fio is a more advanced tool that allows you to simulate different kinds of I/O loads. It's not usually installed by default, so you may need to install it first:
+
+For Ubuntu/Debian:
+
+bash
+Copy code
+sudo apt-get install fio
+For Red Hat/Fedora:
+
+bash
+Copy code
+sudo yum install fio
+Here is a basic random write test:
+
+bash
+Copy code
+fio --name=random-write --ioengine=sync --rw=randwrite --bs=4k --numjobs=1 --size=500m --end_fsync=1
+And a basic random read test:
+
+bash
+Copy code
+fio --name=random-read --ioengine=sync --rw=randread --bs=4k --numjobs=1 --size=500m --end_fsync=1
+You can customize fio tests extensively to suit your specific needs. Check its man page (man fio) for a full list of options.
+
+Note: Performance testing usually generates a lot of writes, which may reduce the lifespan of SSDs. Be cautious while running these tests, especially on a production system or any system where data loss would be a concern. Always backup important data before performing disk operations or tests that write to the disk.
+
+
+
+
+User
+How can I set read/write and access permissions to this directory via cli?
+/media/walter/7514e32b-65c9-4a64-a233-5db2311455f4/files
+ChatGPT
+You can set read, write, and access permissions for a directory in Linux using the chmod and chown commands. The chmod command changes the permissions of the directory, while chown changes the owner.
+
+Changing the Owner and Group
+To change the owner and group of the directory, use:
+
+bash
+Copy code
+sudo chown username:groupname /media/walter/7514e32b-65c9-4a64-a233-5db2311455f4/files
+Replace username and groupname with the actual username and group name you wish to set. This will give ownership of the directory to that user and group.
+
+Changing Permissions using chmod
+Here's a quick guide on what numbers to use when setting permissions with chmod:
+
+4 stands for "read",
+2 stands for "write",
+1 stands for "execute",
+0 stands for "no permission."
+So, you can combine them:
+
+7 (4+2+1) is read, write, and execute,
+6 (4+2) is read and write,
+5 (4+1) is read and execute,
+4 is read-only,
+3 (2+1) is write and execute,
+2 is write-only,
+1 is execute-only,
+0 is no permissions whatsoever.
+You can set permissions for three kinds of user groups:
+
+The file/directory owner,
+The group,
+Others (everyone else).
+For example, if you want to set the directory such that:
+
+The owner can read, write, and execute (7),
+The group can read and execute (5),
+Others can only read (4),
+You'd use:
+
+bash
+Copy code
+sudo chmod 754 /media/walter/7514e32b-65c9-4a64-a233-5db2311455f4/files
+Recursive Change
+If you also want to apply these permissions to every file and sub-directory inside of the directory, add the -R flag:
+
+bash
+Copy code
+sudo chmod -R 754 /media/walter/7514e32b-65c9-4a64-a233-5db2311455f4/files
+Using Symbolic Permissions
+Alternatively, you can set permissions using symbolic notation:
+
+u refers to the owner,
+g refers to the group,
+o refers to others,
+a refers to all.
+You can then use + to add, - to remove, or = to set permissions, followed by one of r, w, x to specify read, write, or execute permissions.
+
+For example, to add read and write permissions for the owner:
+
+bash
+Copy code
+sudo chmod u+rw /media/walter/7514e32b-65c9-4a64-a233-5db2311455f4/files
+To remove write permissions for others:
+
+bash
+Copy code
+sudo chmod o-w /media/walter/7514e32b-65c9-4a64-a233-5db2311455f4/files
+You can also combine these:
+
+bash
+Copy code
+sudo chmod u+rw,g+rx,o+r /media/walter/7514e32b-65c9-4a64-a233-5db2311455f4/files
+This would be equivalent to chmod 754.
+
+Use these commands responsibly and make sure you know what each change implies, especially if you're applying the changes recursively or you're working on a production system.
