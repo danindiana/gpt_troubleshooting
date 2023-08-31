@@ -1,0 +1,39 @@
+Why do I have to run $ export PATH=$PATH:/usr/local/go/bin
+whenever I want to use go from the cli? 
+ChatGPT
+The export PATH=$PATH:/usr/local/go/bin command adds the directory where Go binaries are located (/usr/local/go/bin in this case) to your shell's search path (PATH). The PATH environment variable is a list of directories that tells your shell where to look for executable files when you run a command.
+
+When you run export PATH=$PATH:/usr/local/go/bin, you are telling your shell to append the directory /usr/local/go/bin to the existing PATH. This means that you can just run go from anywhere in the terminal, and the shell will know where to find the go executable.
+
+However, running this command in a terminal session only sets the PATH variable for that session. Once the terminal is closed, the variable is lost, and you have to set it up again next time. To make this change permanent, you should add this command to your shell's startup file. The file you need to edit depends on the shell you're using:
+
+For Bash: Add the export command to the .bashrc or .bash_profile file in your home directory.
+
+bash
+Copy code
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+And then run:
+
+bash
+Copy code
+source ~/.bashrc
+For Zsh: Add it to the .zshrc file in your home directory.
+
+bash
+Copy code
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.zshrc
+And then run:
+
+bash
+Copy code
+source ~/.zshrc
+For Fish: Use the set command in config.fish:
+
+arduino
+Copy code
+echo 'set -gx PATH $PATH /usr/local/go/bin' >> ~/.config/fish/config.fish
+After modifying the appropriate file, you'll need to either restart your terminal or run a source command on the modified file to update your current session. This way, you won't have to run export PATH=$PATH:/usr/local/go/bin every time you open a new terminal window.
+
+
+
+
